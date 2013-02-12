@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Trexin Mobile</string>
+    <string name="mentor_program">Mentor Program</string>
+    <string name="development_plan">Development Plan</string>
+    <string name="sharepoint">SharePoint</string>
+    <string name="dashboard">Dashboard</string>
+
+    <string name="url_mentor_program_asset">file:///android_asset/mentor_program.html</string>
+    <string name="url_development_plan">file:///android_asset/development_plan.html</string>
+    <string name="url_sharepoint">http://trexin.sharepointsite.net</string>
+
+    <string name="dashboard.header.consultant">Consultant</string>
+    <string name="dashboard.header.goals.form">Goals Form</string>
+    <string name="dashboard.header.mentor.approval">Mentor Approval</string>
+</resources>

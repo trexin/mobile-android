@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:useDefaultMargins="true"
+            android:alignmentMode="alignBounds"
+            android:rowOrderPreserved="false"
+            android:columnCount="2">
+
+    <LinearLayout style="@style/CellLinearLayout"
+                  android:clickable="true"
+                  android:onClick="startMentorProgram">
+        <ImageView android:src="@drawable/mentor_program"
+                   style="@style/DesktopImage"/>
+        <TextView android:text="@string/mentor_program" style="@style/DesktopCaption"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/CellLinearLayout"
+                  android:clickable="true"
+                  android:onClick="startDevelopmentPlan">
+        <ImageView android:src="@drawable/development_plan" style="@style/DesktopImage"/>
+        <TextView android:text="@string/development_plan" style="@style/DesktopCaption"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/CellLinearLayout"
+                  android:clickable="true"
+                  android:onClick="openSharePoint">
+        <ImageView android:src="@drawable/share_point" style="@style/DesktopImage"/>
+        <TextView android:text="@string/sharepoint" style="@style/DesktopCaption"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/CellLinearLayout"
+                  android:clickable="true"
+                  android:onClick="startDashboard">
+        <ImageView android:src="@drawable/dashboard" style="@style/DesktopImage"/>
+        <TextView android:text="@string/dashboard" style="@style/DesktopCaption"/>
+    </LinearLayout>
+</GridLayout>
+

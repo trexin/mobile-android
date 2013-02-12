@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
+
+    <TableRow android:gravity="center_vertical"
+            android:background="@android:color/darker_gray">
+
+        <TextView android:text="@string/dashboard.header.consultant"
+             android:layout_height="wrap_content"
+             android:layout_width="0dip"
+             android:layout_weight=".60"
+             android:textStyle="bold"
+             android:textColor="@android:color/black"/>
+
+        <TextView android:text="@string/dashboard.header.goals.form"
+             android:layout_height="wrap_content"
+             android:layout_width="0dip"
+             android:layout_weight=".20"
+             android:textStyle="bold"
+             android:textColor="@android:color/black"/>
+
+        <TextView android:text="@string/dashboard.header.mentor.approval"
+             android:layout_height="wrap_content"
+             android:layout_width="0dip"
+             android:layout_weight=".20"
+             android:textStyle="bold"
+             android:textColor="@android:color/black"/>
+    </TableRow>
+
+    <TableRow>
+        <ListView android:id="@android:id/list"
+                  android:layout_span="3"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:layout_weight="1" />
+    </TableRow>
+</TableLayout>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CellLinearLayout">
+        <item name="android:layout_width">110dip</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">10dip</item>
+        <!--<item name="android:background">@android:color/darker_gray</item>-->
+    </style>
+
+    <style name="DesktopImage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:maxWidth">70dip</item>
+        <item name="android:maxHeight">70dip</item>
+        <!--item name="android:background">@android:color/darker_gray</item-->
+    </style>
+
+    <style name="DesktopCaption">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">top</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">none</item>
+        <!--item name="android:background">@android:color/darker_gray</item-->
+    </style>
+</resources>
