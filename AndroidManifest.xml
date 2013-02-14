@@ -9,8 +9,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MentorProgram" android:label="@string/mentor_program" />
-        <activity android:name=".DevelopmentPlan" android:label="@string/development_plan" />
+        <activity android:name=".WebViewScreen" android:label="@string/mentor_program" />
         <activity android:name=".Dashboard" android:label="@string/dashboard" />
     </application>
 </manifest>

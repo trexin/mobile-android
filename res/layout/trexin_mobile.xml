@@ -1,41 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingTop="5dp">
 
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:useDefaultMargins="true"
-            android:alignmentMode="alignBounds"
-            android:rowOrderPreserved="false"
-            android:columnCount="2">
-
-    <LinearLayout style="@style/CellLinearLayout"
-                  android:clickable="true"
-                  android:onClick="startMentorProgram">
-        <ImageView android:src="@drawable/mentor_program"
-                   style="@style/DesktopImage"/>
-        <TextView android:text="@string/mentor_program" style="@style/DesktopCaption"/>
+    <LinearLayout android:onClick="openMentorProgram" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/mentor_program" style="@style/MainMenuImage"/>
+	    <TextView android:text="@string/mentor_program" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/CellLinearLayout"
-                  android:clickable="true"
-                  android:onClick="startDevelopmentPlan">
-        <ImageView android:src="@drawable/development_plan" style="@style/DesktopImage"/>
-        <TextView android:text="@string/development_plan" style="@style/DesktopCaption"/>
+    <LinearLayout android:onClick="openDevelopmentPlan" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/development_plan" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/development_plan" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/CellLinearLayout"
-                  android:clickable="true"
-                  android:onClick="openSharePoint">
-        <ImageView android:src="@drawable/share_point" style="@style/DesktopImage"/>
-        <TextView android:text="@string/sharepoint" style="@style/DesktopCaption"/>
+    <LinearLayout android:onClick="openSharePoint" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/share_point" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/sharepoint" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout style="@style/CellLinearLayout"
-                  android:clickable="true"
-                  android:onClick="startDashboard">
-        <ImageView android:src="@drawable/dashboard" style="@style/DesktopImage"/>
-        <TextView android:text="@string/dashboard" style="@style/DesktopCaption"/>
+    <LinearLayout android:onClick="openDashboard" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/dashboard" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/dashboard" style="@style/MainMenuText"/>
     </LinearLayout>
-</GridLayout>
+
+    <LinearLayout android:onClick="startPrototype" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/mentor_program" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/prototype" style="@style/MainMenuText"/>
+    </LinearLayout>
+</LinearLayout>
 

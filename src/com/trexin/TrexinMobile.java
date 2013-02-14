@@ -13,23 +13,32 @@ public class TrexinMobile extends Activity {
         setContentView(R.layout.trexin_mobile);
     }
 
-    public void startMentorProgram( View view ){
-      Intent mentorProgram = new Intent( this, MentorProgram.class);
-      this.startActivity(mentorProgram);
+    public void openMentorProgram( View view ){
+        Intent webViewIntent = new Intent( this, WebViewScreen.class);
+        webViewIntent.putExtra( WebViewScreen.URL_PARAM, getString( R.string.url_mentor_program ));
+        this.startActivity( webViewIntent );
     }
 
-    public void startDevelopmentPlan( View view ){
-      Intent developmentPlan = new Intent( this, DevelopmentPlan.class);
-      this.startActivity(developmentPlan);
+    public void openDevelopmentPlan( View view ){
+        Intent webViewIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_development_plan )));
+        startActivity( webViewIntent );
+//        Intent webViewIntent = new Intent( this, WebViewScreen.class);
+//        webViewIntent.putExtra( WebViewScreen.URL_PARAM, getString( R.string.development_plan ));
+//        this.startActivity( webViewIntent );
     }
 
     public void openSharePoint( View view ) {
-      Intent openSharepoint = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_sharepoint )));
-      startActivity( openSharepoint );
+        Intent webViewIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_sharepoint )));
+        startActivity( webViewIntent );
     }
 
-    public void startDashboard( View view ){
-      Intent dashboard = new Intent( this, Dashboard.class);
-      this.startActivity(dashboard);
+    public void openDashboard( View view ){
+        Intent webViewIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_dashboard )));
+        startActivity(webViewIntent);
+    }
+
+    public void startPrototype( View view ){
+        Intent dashboard = new Intent( this, Dashboard.class);
+        this.startActivity(dashboard);
     }
 }

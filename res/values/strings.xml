@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Trexin Mobile</string>
+    <string name="app_name">Trexin</string>
     <string name="mentor_program">Mentor Program</string>
     <string name="development_plan">Development Plan</string>
     <string name="sharepoint">SharePoint</string>
     <string name="dashboard">Dashboard</string>
+    <string name="prototype">Prototype</string>
 
-    <string name="url_mentor_program_asset">file:///android_asset/mentor_program.html</string>
-    <string name="url_development_plan">file:///android_asset/development_plan.html</string>
+    <string name="url_mentor_program">https://trexin.sharepointsite.net/HR/Personnel%20Development/2013%20Goals%20MM%20Kick%20Off%20Deck%202.1.13.pdf</string>
+    <string name="url_development_plan">https://trexin.sharepointsite.net/HR/Personnel%20Development/Trexin%20Consulting%20Personnel%20Development.docx</string>
     <string name="url_sharepoint">http://trexin.sharepointsite.net</string>
+    <string name="url_dashboard">https://trexinconsulting.sharepoint.com/DemoTeamSite/Lists/Individual%20Tracking/Allitemsg.aspx</string>
 
     <string name="dashboard.header.consultant">Consultant</string>
     <string name="dashboard.header.goals.form">Goals Form</string>
