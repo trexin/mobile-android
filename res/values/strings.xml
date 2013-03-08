@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Trexin</string>
+    <string name="receiver_name">Trexin Download listener</string>
+    <string name="login">Login</string>
     <string name="mentor_program">Mentor Program</string>
     <string name="development_plan">Development Plan</string>
     <string name="sharepoint">SharePoint</string>
     <string name="dashboard">Dashboard</string>
     <string name="prototype">Prototype</string>
 
-    <string name="url_mentor_program">https://trexin.sharepointsite.net/HR/Personnel%20Development/2013%20Goals%20MM%20Kick%20Off%20Deck%202.1.13.pdf</string>
+    <string name="url_login_page">https://trexinconsulting.sharepoint.com/SitePages/Home.aspx</string>
+    <!--string name="url_login_page">https://trexinconsulting.sharepoint.com/_layouts/mobile/mbllogin.aspx</string-->
+
+    <string name="url_mentor_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
+    <!--string name="url_mentor_program">http://www.d102.org/attachments/105_2012-2013%20Calendar.pdf</string-->
     <string name="url_development_plan">https://trexin.sharepointsite.net/HR/Personnel%20Development/Trexin%20Consulting%20Personnel%20Development.docx</string>
-    <string name="url_sharepoint">http://trexin.sharepointsite.net</string>
+    <!--string name="url_sharepoint">http://www.google.com</string-->
+    <string name="url_sharepoint">https://trexin.sharepointsite.net</string>
+    <!--string name="url_sharepoint">https://trexinconsulting.sharepoint.com/_layouts/WordViewer.aspx?id=/Shared%20Documents/test.docx&amp;Source=https%3A%2F%2Ftrexinconsulting%2Esharepoint%2Ecom%2FSitePages%2FHome%2Easpx&amp;DefaultItemOpen=1&amp;DefaultItemOpen=1</string-->
     <string name="url_dashboard">https://trexinconsulting.sharepoint.com/DemoTeamSite/Lists/Individual%20Tracking/Allitemsg.aspx</string>
 
     <string name="dashboard.header.consultant">Consultant</string>
     <string name="dashboard.header.goals.form">Goals Form</string>
     <string name="dashboard.header.mentor.approval">Mentor Approval</string>
+
+    <string name="download.status.unrecognized">Download status not recognized by the app: %.</string>
+    <string name="download.error.message">File download \'%1$s\' failed with error: %2$s.</string>
+    <string name="download.error.generic">Unknown error</string>
+
+    <string name="download.error.cannot.resume">Some possibly transient error occurred but we cannot resume the download</string>
+    <string name="download.error.device.not.found">No external storage device was found. Possibly this is because the SD card is not mounted</string>
+    <string name="download.error.file.already.exists">The requested destination file already exists. The download manager will not overwrite an existing file</string>
+    <string name="download.error.file.error">A storage issue</string>
+    <string name="download.error.http.data.error">Error receiving or processing data occurred at the HTTP level</string>
+    <string name="download.error.insufficient.space">Insufficient storage space. Typically, this is because the SD card is full</string>
+    <string name="download.error.too.many.redirects">There were too many redirects</string>
+    <string name="download.error.unhandled.http.code">An HTTP code was received that download manager cannot handle</string>
+    <string name="download.error.unknown">The download has completed with an error that does not fit under any other error code</string>
+    <string name="download.error.http.with.code">HTTP error occurred. HTTP status code: %s</string>
 </resources>
