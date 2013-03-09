@@ -4,25 +4,18 @@
     <string name="receiver_name">Trexin Download listener</string>
     <string name="login">Login</string>
     <string name="mentor_program">Mentor Program</string>
-    <string name="development_plan">Development Plan</string>
-    <string name="sharepoint">SharePoint</string>
-    <string name="dashboard">Dashboard</string>
-    <string name="prototype">Prototype</string>
+    <string name="development_calendar">Development Calendar</string>
+    <string name="development_tracking">Development Tracking</string>
+    <string name="development_program">Development Program</string>
+    <string name="payroll_schedule">Payroll Schedule</string>
 
     <string name="url_login_page">https://trexinconsulting.sharepoint.com/SitePages/Home.aspx</string>
-    <!--string name="url_login_page">https://trexinconsulting.sharepoint.com/_layouts/mobile/mbllogin.aspx</string-->
 
     <string name="url_mentor_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
-    <!--string name="url_mentor_program">http://www.d102.org/attachments/105_2012-2013%20Calendar.pdf</string-->
-    <string name="url_development_plan">https://trexin.sharepointsite.net/HR/Personnel%20Development/Trexin%20Consulting%20Personnel%20Development.docx</string>
-    <!--string name="url_sharepoint">http://www.google.com</string-->
-    <string name="url_sharepoint">https://trexin.sharepointsite.net</string>
-    <!--string name="url_sharepoint">https://trexinconsulting.sharepoint.com/_layouts/WordViewer.aspx?id=/Shared%20Documents/test.docx&amp;Source=https%3A%2F%2Ftrexinconsulting%2Esharepoint%2Ecom%2FSitePages%2FHome%2Easpx&amp;DefaultItemOpen=1&amp;DefaultItemOpen=1</string-->
-    <string name="url_dashboard">https://trexinconsulting.sharepoint.com/DemoTeamSite/Lists/Individual%20Tracking/Allitemsg.aspx</string>
-
-    <string name="dashboard.header.consultant">Consultant</string>
-    <string name="dashboard.header.goals.form">Goals Form</string>
-    <string name="dashboard.header.mentor.approval">Mentor Approval</string>
+    <string name="url_development_calendar">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
+    <string name="url_development_tracking">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
+    <string name="url_development_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
+    <string name="url_payroll_schedule">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
 
     <string name="download.status.unrecognized">Download status not recognized by the app: %.</string>
     <string name="download.error.message">File download \'%1$s\' failed with error: %2$s.</string>

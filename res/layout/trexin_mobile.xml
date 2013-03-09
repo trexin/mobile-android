@@ -6,28 +6,28 @@
               android:paddingTop="5dp">
 
     <LinearLayout android:onClick="openMentorProgram" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/mentor_program" style="@style/MainMenuImage"/>
+        <ImageView android:src="@drawable/coffee_icon30" style="@style/MainMenuImage"/>
 	    <TextView android:text="@string/mentor_program" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout android:onClick="openDevelopmentPlan" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/development_plan" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/development_plan" style="@style/MainMenuText"/>
+    <LinearLayout android:onClick="openDevelopmentCalendar" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/calendar_icon30" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/development_calendar" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout android:onClick="openSharePoint" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/share_point" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/sharepoint" style="@style/MainMenuText"/>
+    <LinearLayout android:onClick="openDevelopmentTracking" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/tracking_icon30" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/development_tracking" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout android:onClick="openDashboard" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/dashboard" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/dashboard" style="@style/MainMenuText"/>
+    <LinearLayout android:onClick="openDevelopmentProgram" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/development_icon30" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/development_program" style="@style/MainMenuText"/>
     </LinearLayout>
 
-    <LinearLayout android:onClick="startPrototype" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/mentor_program" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/prototype" style="@style/MainMenuText"/>
+    <LinearLayout android:onClick="openPayrollSchedule" style="@style/MainMenuItem">
+        <ImageView android:src="@drawable/payroll_icon30" style="@style/MainMenuImage"/>
+        <TextView android:text="@string/payroll_schedule" style="@style/MainMenuText"/>
     </LinearLayout>
 </LinearLayout>
 

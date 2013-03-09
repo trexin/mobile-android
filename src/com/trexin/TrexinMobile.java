@@ -73,22 +73,19 @@ public class TrexinMobile extends Activity {
         this.downloadAndViewFile( this.getString( R.string.url_mentor_program ) );
     }
 
-    public void openDevelopmentPlan( View view ){
-        this.downloadAndViewFile( this.getString( R.string.url_development_plan ) );
+    public void openDevelopmentCalendar( View view ){
+        this.downloadAndViewFile( this.getString( R.string.url_development_calendar ) );
     }
 
-    public void openSharePoint( View view ) {
-        Intent webViewIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_sharepoint )));
-        startActivity( webViewIntent );
+    public void openDevelopmentTracking( View view ) {
+        this.downloadAndViewFile( this.getString( R.string.url_development_tracking ) );
     }
 
-    public void openDashboard( View view ){
-        Intent webViewIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( getString( R.string.url_dashboard )));
-        startActivity(webViewIntent);
+    public void openDevelopmentProgram( View view ) {
+        this.downloadAndViewFile( this.getString( R.string.url_development_program ) );
     }
 
-    public void startPrototype( View view ){
-        Intent dashboard = new Intent( this, Dashboard.class);
-        this.startActivity(dashboard);
+    public void openPayrollSchedule( View view ) {
+        this.downloadAndViewFile( this.getString( R.string.url_payroll_schedule ) );
     }
 }
