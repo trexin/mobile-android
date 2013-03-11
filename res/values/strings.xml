@@ -17,9 +17,13 @@
     <string name="url_development_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
     <string name="url_payroll_schedule">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
 
-    <string name="download.status.unrecognized">Download status not recognized by the app: %.</string>
-    <string name="download.error.message">File download \'%1$s\' failed with error: %2$s.</string>
-    <string name="download.error.generic">Unknown error</string>
+    <string name="dialog.download.failed.title">Download failure</string>
+    <string name="dialog.cannot.open.title">Reading failure</string>
+
+    <string name="download.status.unrecognized">Download status not recognized by the app: %s</string>
+    <string name="download.error.message">Cannot download \'%1$s\'. Error: \'%2$s\'.</string>
+    <string name="download.cannot.open.message">Cannot read downloaded file \'%1$s\'. Cannot recognize the file format.</string>
+    <string name="download.error.message.unknown">Unknown error</string>
 
     <string name="download.error.cannot.resume">Some possibly transient error occurred but we cannot resume the download</string>
     <string name="download.error.device.not.found">No external storage device was found. Possibly this is because the SD card is not mounted</string>

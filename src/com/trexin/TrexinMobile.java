@@ -18,7 +18,7 @@ public class TrexinMobile extends Activity {
         DownloadCompleteReceiver downloadCompleteReceiver = new DownloadCompleteReceiver();
         this.registerReceiver( downloadCompleteReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        Office365Token.clearToken( this );
+//        Office365Token.clearToken( this );
     }
 
     private void downloadAndViewFile( String downloadUrl ){
