@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -30,15 +29,13 @@ public class Office365Token {
         }
     }
 
-    public static String asCookie( Context context ) throws TokenNotValidException {
+    public static String asCookie( Context context ) {
         // this throws if the map does not represent a proper token
         EnumMap<TokenKey, String> tokenMap = new EnumMap<TokenKey, String>( TokenKey.class );
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         for ( TokenKey token : TokenKey.values() ) {
-            tokenMap.put( token, settings.getString( token.name(), null ));
+            tokenMap.put( token, settings.getString( token.name(), "" ));
         }
-        // validate the token; throw a TokenNotValidException if the token is not valid
-        validateToken( tokenMap );
         return String.format( "%1$s=%2$s; %3$s=%4$s", TokenKey.rtFa.name(), tokenMap.get( TokenKey.rtFa ),
                                                       TokenKey.FedAuth.name(), tokenMap.get( TokenKey.FedAuth ) );
     }
@@ -50,7 +47,7 @@ public class Office365Token {
             editor.remove( token.name() );
         }
         editor.commit();
-        Log.i( Constants.LOG_TAG, "Office 365 token is removed from Shared Preferences.");
+        TrexinUtils.logInfo( "Office 365 token is removed from Shared Preferences.");
     }
 
     public static void saveToken( String cookies, Context context ) throws TokenNotValidException {
@@ -78,13 +75,13 @@ public class Office365Token {
         }
         // commit the edits
         editor.commit();
-        Log.i( Constants.LOG_TAG, "Office 365 token is written to Shared Preferences.");
+        TrexinUtils.logInfo( "Office 365 token is written to Shared Preferences.");
     }
 
     private static void validateToken( EnumMap<TokenKey, String> tokenMap ) throws TokenNotValidException {
         List<TokenKey> missingTokens = new ArrayList<TokenKey>();
         for ( TokenKey token : TokenKey.values() ) {
-            if ( tokenMap.get( token )  == null ){
+            if ( TextUtils.isEmpty( tokenMap.get( token ) )){
                 missingTokens.add( token );
             }
         }

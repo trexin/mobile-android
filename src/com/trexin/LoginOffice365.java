@@ -24,27 +24,26 @@ public class LoginOffice365 extends Activity {
         public void onPageFinished( WebView view, String url ) {
             CookieSyncManager.getInstance().sync();
             String cookie = CookieManager.getInstance().getCookie(url);
-            Log.i( Constants.LOG_TAG, String.format( "Login interaction: page '%s'; cookies: '%s'", url,  cookie ));
+            Log.i( TrexinUtils.LOG_TAG, String.format( "Login interaction: page '%s'; cookies: '%s'", url,  cookie ));
             try {
-                Intent abc = getIntent();
-                String targetUri = abc.getStringExtra( Constants.INTENT_KEY_DOWNLOAD_URI );
+                DownloadState downloadState = getIntent().getParcelableExtra( TrexinUtils.KEY_DOWNLOAD_STATE);
                 // get the cookie and pass it to the token manager for saving
                 Office365Token.saveToken( cookie, LoginOffice365.this );
                 // set the resulting intent
                 Intent result = new Intent();
                 setResult( RESULT_OK,  result );
-                result.putExtra( Constants.INTENT_KEY_DOWNLOAD_URI, targetUri );
+                result.putExtra( TrexinUtils.KEY_DOWNLOAD_STATE, downloadState );
                 // finish the current activity without showing the content of page
                 finish();
-                Log.i( Constants.LOG_TAG, "Logged in Office 365." );
+                Log.i( TrexinUtils.LOG_TAG, "Logged in Office 365." );
             } catch ( Office365Token.TokenNotValidException ignore ){
-                //
+                // if the tokens are not
             }
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            Log.i( Constants.LOG_TAG, String.format( "onReceivedError: '%s'", failingUrl ));
+            Log.i( TrexinUtils.LOG_TAG, String.format( "onReceivedError: '%s'", failingUrl ));
             super.onReceivedError(view, errorCode, description, failingUrl);
         }
     }
