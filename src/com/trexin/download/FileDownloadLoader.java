@@ -21,9 +21,14 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
 
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         private long downloadId;
+        private boolean active;
 
         private DownloadCompleteReceiver(long downloadId) {
             this.downloadId = downloadId;
+            this.active = true;
+            // NOTE: because 'registerReceiver()' is called on the context which is an Activity, the receiver's
+            // 'onReceive' is invoked on the UI thread.
+            getContext().registerReceiver( this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
             TrexinUtils.logInfo( String.format( "%s instantiated", this ));
         }
 
@@ -49,10 +54,17 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                 }
                 int downloadStatus = cursor.getInt( cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                 if ( downloadStatus == DownloadManager.STATUS_SUCCESSFUL || downloadStatus == DownloadManager.STATUS_FAILED ) {
-                    context.unregisterReceiver(this);
+                    this.unregister( context );
                     // notify the loader about the download completion
                     FileDownloadLoader.this.onContentChanged();
                 }
+            }
+        }
+
+        public void unregister(  Context context ){
+            if ( this.active ){
+                context.unregisterReceiver(this);
+                this.active = false;
             }
         }
 
@@ -89,9 +101,6 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                     addRequestHeader( "cookie", Office365Token.asCookie( context ));
             // 2. create and register new download complete receiver
             this.downloadCompleteReceiver = new DownloadCompleteReceiver( downloadMgr.enqueue(request) );
-            // NOTE: because 'registerReceiver()' is called on the context which is an Activity, the receiver's
-            // 'onReceive' is invoked on the UI thread.
-            context.registerReceiver( this.downloadCompleteReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         }
     }
 
@@ -110,7 +119,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
 
         if ( this.downloadCompleteReceiver != null ){
             // unregister the receiver
-            this.getContext().unregisterReceiver( this.downloadCompleteReceiver );
+            this.downloadCompleteReceiver.unregister( this.getContext() );
             this.downloadCompleteReceiver = null;
         }
 
