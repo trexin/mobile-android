@@ -36,7 +36,7 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         @Override
         public Dialog onCreateDialog( Bundle savedInstanceState ) {
             final ProgressDialog progressDialog = new ProgressDialog( getActivity() );
-            progressDialog.setMessage("Please wait while loading...");
+            progressDialog.setMessage( this.getString( R.string.dialog_progress_message ));
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(true);
 
@@ -47,14 +47,18 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                 }
             });
 
-            progressDialog.setButton( DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                public void onClick( DialogInterface dialog, int which ) {
-                    dialog.dismiss();
-                    TrexinMobile trexinMobile = (TrexinMobile)getActivity();
-                    Integer currentLoaderId = trexinMobile.downloadState.getLoaderId();
-                    trexinMobile.getLoaderManager().destroyLoader( currentLoaderId );
-                }
-            });
+            progressDialog.setButton( DialogInterface.BUTTON_NEGATIVE,
+                    getString( android.R.string.cancel ),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick( DialogInterface dialog, int which ) {
+                            // 1. close the dialog
+                            dialog.dismiss();
+                            // 2. destroy the corresponding loader
+                            TrexinMobile trexinMobile = (TrexinMobile)getActivity();
+                            Integer currentLoaderId = trexinMobile.downloadState.getLoaderId();
+                            trexinMobile.getLoaderManager().destroyLoader( currentLoaderId );
+                        }
+                    });
             return progressDialog;
         }
     }

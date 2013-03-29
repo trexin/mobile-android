@@ -19,6 +19,7 @@
 
     <string name="dialog.download.failed.title">Download failure</string>
     <string name="dialog.cannot.open.title">Reading failure</string>
+    <string name="dialog.progress.message">Please wait while loading...</string>
 
     <string name="download.status.unrecognized">Download status not recognized by the app: %s</string>
     <string name="download.error.message">Cannot download \'%1$s\'. Error: \'%2$s\'.</string>
