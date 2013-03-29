@@ -22,6 +22,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         private long downloadId;
         private boolean active;
+        private FileDownload downloadResult;
 
         private DownloadCompleteReceiver(long downloadId) {
             this.downloadId = downloadId;
@@ -34,6 +35,10 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
 
         public long getDownloadId() {
             return this.downloadId;
+        }
+
+        public FileDownload getDownloadResult() {
+            return this.downloadResult;
         }
 
         // NOTE: because DownloadCompleteReceiver was registered on the context which is an Activity, this
@@ -52,8 +57,21 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                 if ( !cursor.moveToFirst()){
                     throw new IllegalStateException( String.format( "Unexpected error: missing a record in DB for '%s'", this ));
                 }
+                String targetUrl = cursor.getString( cursor.getColumnIndex( DownloadManager.COLUMN_URI ) );
                 int downloadStatus = cursor.getInt( cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                if ( downloadStatus == DownloadManager.STATUS_SUCCESSFUL || downloadStatus == DownloadManager.STATUS_FAILED ) {
+                if ( downloadStatus == DownloadManager.STATUS_SUCCESSFUL ) {
+                    this.downloadResult = new FileDownload( targetUrl,
+                                                            downloadMgr.getUriForDownloadedFile( this.downloadId ),
+                                                            downloadMgr.getMimeTypeForDownloadedFile( this.downloadId ));
+                    // unregister itself
+                    this.unregister( context );
+                    // notify the loader about the download completion
+                    FileDownloadLoader.this.onContentChanged();
+                } else if ( downloadStatus == DownloadManager.STATUS_FAILED ){
+                    int reason = cursor.getInt(cursor.getColumnIndex( DownloadManager.COLUMN_REASON ));
+                    String errorMsg = this.detailedDownloadMessage( context, reason);
+                    this.downloadResult = new FileDownload( targetUrl, reason, errorMsg );
+                    // unregister itself
                     this.unregister( context );
                     // notify the loader about the download completion
                     FileDownloadLoader.this.onContentChanged();
@@ -61,10 +79,45 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
             }
         }
 
-        public void unregister(  Context context ){
+        public void unregister( Context context ){
             if ( this.active ){
                 context.unregisterReceiver(this);
                 this.active = false;
+            }
+        }
+
+        private String detailedDownloadMessage( Context context, int reasonCode){
+            switch (reasonCode) {
+                case DownloadManager.ERROR_CANNOT_RESUME:{
+                    return context.getString( R.string.download_error_cannot_resume );
+                }
+                case DownloadManager.ERROR_DEVICE_NOT_FOUND: {
+                    return context.getString( R.string.download_error_device_not_found );
+                }
+                case DownloadManager.ERROR_FILE_ALREADY_EXISTS: {
+                    return context.getString( R.string.download_error_file_already_exists );
+                }
+                case DownloadManager.ERROR_FILE_ERROR:{
+                    return context.getString( R.string.download_error_file_error );
+                }
+                case DownloadManager.ERROR_HTTP_DATA_ERROR:{
+                    return context.getString( R.string.download_error_http_data_error );
+                }
+                case DownloadManager.ERROR_INSUFFICIENT_SPACE :{
+                    return context.getString( R.string.download_error_insufficient_space );
+                }
+                case DownloadManager.ERROR_TOO_MANY_REDIRECTS: {
+                    return context.getString( R.string.download_error_too_many_redirects );
+                }
+                case DownloadManager.ERROR_UNHANDLED_HTTP_CODE: {
+                    return context.getString( R.string.download_error_unhandled_http_code );
+                }
+                case DownloadManager.ERROR_UNKNOWN: {
+                    return context.getString( R.string.download_error_unknown );
+                }
+                default: {
+                    return context.getString( R.string.download_error_http_with_code, reasonCode );
+                }
             }
         }
 
@@ -134,65 +187,9 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
         // A task that performs the asynchronous load
         TrexinUtils.logInfo( String.format( "'%s'.loadInBackground() started...", this ));
         try {
-            Context context = this.getContext();
-            long downloadId = this.downloadCompleteReceiver.getDownloadId();
-            DownloadManager downloadMgr = (DownloadManager)context.getSystemService( Context.DOWNLOAD_SERVICE );
-
-            DownloadManager.Query query = new DownloadManager.Query();
-            query.setFilterById( downloadId );
-            Cursor cursor = downloadMgr.query( query );
-            if ( !cursor.moveToFirst()){
-                throw new IllegalStateException( String.format( "Unexpected error: missing a record in DB for '%s'", this ));
-            }
-            String targetUrl = cursor.getString( cursor.getColumnIndex( DownloadManager.COLUMN_URI ) );
-            int downloadStatus = cursor.getInt( cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-            if ( downloadStatus == DownloadManager.STATUS_SUCCESSFUL ) {
-                return new FileDownload( targetUrl, downloadMgr.getUriForDownloadedFile(downloadId),
-                                                    downloadMgr.getMimeTypeForDownloadedFile(downloadId) );
-            } else if ( downloadStatus == DownloadManager.STATUS_FAILED ){
-                int reason = cursor.getInt(cursor.getColumnIndex( DownloadManager.COLUMN_REASON ));
-                String errorMsg = this.detailedDownloadMessage(reason);
-                return new FileDownload( targetUrl, reason, errorMsg );
-            }
-            throw new IllegalStateException( String.format( "Unexpected 'download status' '%s' ", downloadStatus ) );
+            return this.downloadCompleteReceiver.getDownloadResult();
         } finally {
             TrexinUtils.logInfo( String.format( "'%s'.loadInBackground() completed", this ));
-        }
-    }
-
-    private String detailedDownloadMessage(int reasonCode){
-        Context context = this.getContext();
-        switch (reasonCode) {
-            case DownloadManager.ERROR_CANNOT_RESUME:{
-                return context.getString( R.string.download_error_cannot_resume );
-            }
-            case DownloadManager.ERROR_DEVICE_NOT_FOUND: {
-                return context.getString( R.string.download_error_device_not_found );
-            }
-            case DownloadManager.ERROR_FILE_ALREADY_EXISTS: {
-                return context.getString( R.string.download_error_file_already_exists );
-            }
-            case DownloadManager.ERROR_FILE_ERROR:{
-                return context.getString( R.string.download_error_file_error );
-            }
-            case DownloadManager.ERROR_HTTP_DATA_ERROR:{
-                return context.getString( R.string.download_error_http_data_error );
-            }
-            case DownloadManager.ERROR_INSUFFICIENT_SPACE :{
-                return context.getString( R.string.download_error_insufficient_space );
-            }
-            case DownloadManager.ERROR_TOO_MANY_REDIRECTS: {
-                return context.getString( R.string.download_error_too_many_redirects );
-            }
-            case DownloadManager.ERROR_UNHANDLED_HTTP_CODE: {
-                return context.getString( R.string.download_error_unhandled_http_code );
-            }
-            case DownloadManager.ERROR_UNKNOWN: {
-                return context.getString( R.string.download_error_unknown );
-            }
-            default: {
-                return context.getString( R.string.download_error_http_with_code, reasonCode );
-            }
         }
     }
 

@@ -44,7 +44,7 @@ public class FileDownload {
     }
 
     public boolean isLoginRequired(){
-        return this.httpErrorCode == HTTP_CODE_FORBIDDEN;
+        return this.httpErrorCode != null && this.httpErrorCode == HTTP_CODE_FORBIDDEN;
     }
 
     @Override

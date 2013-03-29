@@ -34,9 +34,8 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         }
 
         @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+        public Dialog onCreateDialog( Bundle savedInstanceState ) {
             final ProgressDialog progressDialog = new ProgressDialog( getActivity() );
-//            progressDialog.setTitle("Indeterminate");
             progressDialog.setMessage("Please wait while loading...");
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(true);
@@ -45,6 +44,15 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
             progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     return keyCode == KeyEvent.KEYCODE_BACK;
+                }
+            });
+
+            progressDialog.setButton( DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                public void onClick( DialogInterface dialog, int which ) {
+                    dialog.dismiss();
+                    TrexinMobile trexinMobile = (TrexinMobile)getActivity();
+                    Integer currentLoaderId = trexinMobile.downloadState.getLoaderId();
+                    trexinMobile.getLoaderManager().destroyLoader( currentLoaderId );
                 }
             });
             return progressDialog;
@@ -98,6 +106,12 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
             this.initDownloadIfAny();
         }
 //        Office365Token.clearToken( this );
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.stateAlreadySaved = false;
     }
 
     private void downloadAndViewFile( String downloadUrl, Integer loaderId ){
