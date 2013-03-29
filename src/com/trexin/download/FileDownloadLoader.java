@@ -150,7 +150,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
             String filename = targetUri.getLastPathSegment();
             DownloadManager.Request request = new DownloadManager.Request( targetUri ).
                     setDestinationInExternalFilesDir( context, null, filename).
-                    setNotificationVisibility( DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED ).
+                    setNotificationVisibility( DownloadManager.Request.VISIBILITY_HIDDEN ).
                     addRequestHeader( "cookie", Office365Token.asCookie( context ));
             // 2. create and register new download complete receiver
             this.downloadCompleteReceiver = new DownloadCompleteReceiver( downloadMgr.enqueue(request) );
