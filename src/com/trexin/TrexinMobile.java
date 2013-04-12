@@ -17,13 +17,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
-import com.trexin.download.FileDownload;
+import com.trexin.download.DownloadResult;
+import com.trexin.download.DownloadState;
 import com.trexin.download.FileDownloadLoader;
 
-public class TrexinMobile extends Activity implements LoaderManager.LoaderCallbacks<FileDownload>{
+public class TrexinMobile extends Activity implements LoaderManager.LoaderCallbacks<DownloadResult>{
     private Handler handler = new Handler();
 
-    private DownloadState downloadState;
+    private DownloadState downloadState = new DownloadState();
     private boolean stateAlreadySaved;
 
     public static class ProgressDialogFragment extends DialogFragment {
@@ -55,7 +56,7 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                             dialog.dismiss();
                             // 2. destroy the corresponding loader
                             TrexinMobile trexinMobile = (TrexinMobile)getActivity();
-                            Integer currentLoaderId = trexinMobile.downloadState.getLoaderId();
+                            Integer currentLoaderId = trexinMobile.downloadState.getActiveLoaderId();
                             trexinMobile.getLoaderManager().destroyLoader( currentLoaderId );
                         }
                     });
@@ -90,11 +91,12 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
     }
 
     private void initDownloadIfAny(){
-        if ( this.downloadState != null ){
+        Integer activeLoaderId = this.downloadState.getActiveLoaderId();
+        if ( activeLoaderId != null ){
             TrexinUtils.logInfo(String.format( "Initiating the download '%s'...", this.downloadState ));
             Bundle args = new Bundle();
             args.putParcelable(TrexinUtils.KEY_DOWNLOAD_STATE, this.downloadState);
-            this.getLoaderManager().initLoader( this.downloadState.getLoaderId(), args, this );
+            this.getLoaderManager().initLoader( activeLoaderId, args, this );
         }
     }
 
@@ -118,11 +120,18 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         this.stateAlreadySaved = false;
     }
 
-    private void downloadAndViewFile( String downloadUrl, Integer loaderId ){
-        ProgressDialogFragment progressDialog = ProgressDialogFragment.newInstance();
-        progressDialog.show( this.getFragmentManager(), ProgressDialogFragment.PROGRESS_DIALOG_TAG );
-        this.downloadState = new DownloadState( downloadUrl, loaderId );
-        this.initDownloadIfAny();
+    private void downloadAndViewFile( String url ){
+        DownloadResult downloadResult = this.downloadState.cachedDownloadResult(url);
+        if ( downloadResult != null ){
+            // 1. if download result is already cached, simply render it in UI
+            this.renderDownloadResult( downloadResult );
+        } else {
+            // 2. if the download result is not cached, start the downloading process
+            ProgressDialogFragment progressDialog = ProgressDialogFragment.newInstance();
+            progressDialog.show( this.getFragmentManager(), ProgressDialogFragment.PROGRESS_DIALOG_TAG );
+            this.downloadState.markActiveDownload(url);
+            this.initDownloadIfAny();
+        }
     }
 
     @Override
@@ -141,8 +150,8 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void changeUIOnDownloadComplete(FileDownload fileDownload){
-        TrexinUtils.logInfo( String.format( "Starting changeUIOnDownloadComplete() for '%s'...", fileDownload ) );
+    private void renderDownloadResult(DownloadResult downloadResult){
+        TrexinUtils.logInfo( String.format( "Starting renderDownloadResult() for '%s'...", downloadResult) );
         try {
             // 1. remove the Progress dialog
             Fragment dialogFragment = getFragmentManager().findFragmentByTag( ProgressDialogFragment.PROGRESS_DIALOG_TAG );
@@ -151,32 +160,32 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                 transaction.remove( dialogFragment );
                 transaction.commit();
             }
-            if ( fileDownload.isLoginRequired() ){
+            if ( downloadResult.isLoginRequired() ){
                 // 2. login is required
                 TrexinUtils.logInfo( "Starting the Login screen ." );
                 Intent loginIntent = new Intent( this, LoginOffice365.class );
                 this.startActivityForResult( loginIntent, 0 );
                 return;
-            } else if ( !fileDownload.isSuccess() ){
+            } else if ( !downloadResult.isSuccess() ){
                 // 3. the download was a failure
-                TrexinUtils.logWarn(String.format( "Download '%s' failed. Error: '%s'", fileDownload.getTargetUrl(),
-                                                                                        fileDownload.getErrorMessage()));
+                TrexinUtils.logWarn(String.format( "Download '%s' failed. Error: '%s'", downloadResult.getTargetUrl(),
+                                                                                        downloadResult.getErrorMessage()));
                 // 3a. show the error dialog box
                 ErrorDialogFragment errorDialogFragment = ErrorDialogFragment.newInstance(
                                                                                 R.string.dialog_download_failed_title,
-                                                                                fileDownload.getErrorMessage());
+                                                                                downloadResult.getErrorMessage());
                 errorDialogFragment.show( getFragmentManager(), ErrorDialogFragment.ERROR_DIALOG_TAG );
                 return;
             }
             // 4. Download is a success
-            Uri localFile = fileDownload.getLocalFile();
+            Uri localFile = downloadResult.getLocalFile();
             Intent viewDocumentIntent = new Intent( Intent.ACTION_VIEW );
-            viewDocumentIntent.setDataAndType( localFile, fileDownload.getMimeType() );
+            viewDocumentIntent.setDataAndType( localFile, downloadResult.getMimeType() );
             try {
                 this.startActivity(viewDocumentIntent);
             } catch ( ActivityNotFoundException e ){
                 TrexinUtils.logWarn(String.format(  "Download '%s' succeeded but cannot read the file.",
-                        fileDownload.getTargetUrl()), e);
+                        downloadResult.getTargetUrl()), e);
                 String filename = localFile.getLastPathSegment();
                 ErrorDialogFragment errorDialogFragment = ErrorDialogFragment.newInstance(
                         R.string.dialog_cannot_open_title,
@@ -184,7 +193,7 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                 errorDialogFragment.show( this.getFragmentManager(), ErrorDialogFragment.ERROR_DIALOG_TAG );
             }
         } finally {
-            TrexinUtils.logInfo( String.format( "Completed changeUIOnDownloadComplete() for '%s'...", fileDownload ) );
+            TrexinUtils.logInfo( String.format( "Completed renderDownloadResult() for '%s'...", downloadResult) );
         }
     }
 
@@ -197,52 +206,52 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         outState.putParcelable( TrexinUtils.KEY_DOWNLOAD_STATE, this.downloadState );
     }
 
-    public Loader<FileDownload> onCreateLoader( int id, Bundle args ) {
+    public Loader<DownloadResult> onCreateLoader( int id, Bundle args ) {
         TrexinUtils.logInfo("onCreateLoader() called");
         DownloadState downloadState = args.getParcelable(TrexinUtils.KEY_DOWNLOAD_STATE);
-        return new FileDownloadLoader( this, downloadState );
+        return new FileDownloadLoader( this, downloadState.getActiveDownloadUrl() );
     }
 
-    public void onLoadFinished( Loader<FileDownload> fileDownloadLoader, final FileDownload fileDownload ) {
-        TrexinUtils.logInfo( String.format( "Starting onLoadFinished() for '%s'...", fileDownload ) );
+    public void onLoadFinished( Loader<DownloadResult> fileDownloadLoader, final DownloadResult downloadResult) {
+        TrexinUtils.logInfo( String.format( "Starting onLoadFinished() for '%s'...", downloadResult) );
         // NOTE: LoaderManager.LoaderCallbacks.onLoadFinished() javadoc says: an application is not allowed to commit
         // fragment transactions while in this call, since it can happen after an activity's state is saved.
         // Because of that I cannot directly call any fragment-operating methods. Instead I have to schedule these
         // operations for the future.
         if ( !this.stateAlreadySaved ){
-            this.downloadState = null;
+            this.downloadState.endActiveDownload( ((FileDownloadLoader)fileDownloadLoader).getDownloadUrl(), downloadResult );
             this.handler.post( new Runnable() {
                 public void run() {
-                    changeUIOnDownloadComplete(fileDownload);
+                    renderDownloadResult( downloadResult );
                 }
             });
         } else {
-            TrexinUtils.logWarn( String.format( "onLoadFinished() for '%s': onLoadFinished() is called after onSaveInstanceState(). UI updating code is skipped.", fileDownload ) );
+            TrexinUtils.logWarn( String.format( "onLoadFinished() for '%s': onLoadFinished() is called after onSaveInstanceState(). UI updating code is skipped.", downloadResult) );
         }
-        TrexinUtils.logInfo( String.format( "Completed onLoadFinished() for '%s'", fileDownload ) );
+        TrexinUtils.logInfo( String.format( "Completed onLoadFinished() for '%s'", downloadResult) );
     }
 
-    public void onLoaderReset(Loader<FileDownload> fileDownloadLoader) {
+    public void onLoaderReset(Loader<DownloadResult> fileDownloadLoader) {
         TrexinUtils.logInfo("onLoaderReset() called");
     }
 
     public void openMentorProgram( View view ){
-        this.downloadAndViewFile( this.getString( R.string.url_mentor_program ), 0 );
+        this.downloadAndViewFile( this.getString( R.string.url_mentor_program ) );
     }
 
     public void openDevelopmentCalendar( View view ){
-        this.downloadAndViewFile( this.getString( R.string.url_development_calendar ), 1 );
+        this.downloadAndViewFile( this.getString( R.string.url_development_calendar ) );
     }
 
     public void openDevelopmentTracking( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_development_tracking ), 2 );
+        this.downloadAndViewFile( this.getString( R.string.url_development_tracking ) );
     }
 
     public void openDevelopmentProgram( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_development_program ), 3 );
+        this.downloadAndViewFile( this.getString( R.string.url_development_program ) );
     }
 
     public void openPayrollSchedule( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_payroll_schedule ), 4 );
+        this.downloadAndViewFile( this.getString( R.string.url_payroll_schedule ) );
     }
 }

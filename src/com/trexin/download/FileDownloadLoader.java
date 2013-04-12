@@ -8,21 +8,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import com.trexin.DownloadState;
 import com.trexin.Office365Token;
 import com.trexin.R;
 import com.trexin.TrexinUtils;
 
-public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
+public class FileDownloadLoader extends AsyncTaskLoader<DownloadResult> {
     private String downloadUrl;
     private DownloadCompleteReceiver downloadCompleteReceiver;
-
-    private FileDownload fileDownload;
 
     private class DownloadCompleteReceiver extends BroadcastReceiver {
         private long downloadId;
         private boolean active;
-        private FileDownload downloadResult;
+        private DownloadResult downloadResultResult;
 
         private DownloadCompleteReceiver(long downloadId) {
             this.downloadId = downloadId;
@@ -33,12 +30,8 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
             TrexinUtils.logInfo( String.format( "%s instantiated", this ));
         }
 
-        public long getDownloadId() {
-            return this.downloadId;
-        }
-
-        public FileDownload getDownloadResult() {
-            return this.downloadResult;
+        public DownloadResult getDownloadResultResult() {
+            return this.downloadResultResult;
         }
 
         // NOTE: because DownloadCompleteReceiver was registered on the context which is an Activity, this
@@ -60,7 +53,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                 String targetUrl = cursor.getString( cursor.getColumnIndex( DownloadManager.COLUMN_URI ) );
                 int downloadStatus = cursor.getInt( cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                 if ( downloadStatus == DownloadManager.STATUS_SUCCESSFUL ) {
-                    this.downloadResult = new FileDownload( targetUrl,
+                    this.downloadResultResult = new DownloadResult( targetUrl,
                                                             downloadMgr.getUriForDownloadedFile( this.downloadId ),
                                                             downloadMgr.getMimeTypeForDownloadedFile( this.downloadId ));
                     // unregister itself
@@ -70,7 +63,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                 } else if ( downloadStatus == DownloadManager.STATUS_FAILED ){
                     int reason = cursor.getInt(cursor.getColumnIndex( DownloadManager.COLUMN_REASON ));
                     String errorMsg = this.detailedDownloadMessage( context, reason);
-                    this.downloadResult = new FileDownload( targetUrl, reason, errorMsg );
+                    this.downloadResultResult = new DownloadResult( targetUrl, reason, errorMsg );
                     // unregister itself
                     this.unregister( context );
                     // notify the loader about the download completion
@@ -81,6 +74,7 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
 
         public void unregister( Context context ){
             if ( this.active ){
+                TrexinUtils.logInfo( String.format( "'%s'.unregister() called", this ));
                 context.unregisterReceiver(this);
                 this.active = false;
             }
@@ -123,13 +117,17 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
 
         @Override
         public String toString() {
-            return String.format( "DownloadCompleteReceiver [downloadId:'%s']", this.downloadId );
+            return String.format( "DownloadCompleteReceiver [downloadId:'%s'; active='%s']", this.downloadId, this.active );
         }
     }
 
-    public FileDownloadLoader( Context context, DownloadState downloadState ) {
+    public FileDownloadLoader( Context context, String downloadUrl ) {
         super( context );
-        this.downloadUrl = downloadState.getDownloadUrl();
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getDownloadUrl() {
+        return this.downloadUrl;
     }
 
     @Override
@@ -137,11 +135,11 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
         // Invoked on main UI thread.
         TrexinUtils.logInfo( String.format( "'%s'.onStartLoading() called", this ));
 
-        if ( this.fileDownload != null) {
+        if ( this.downloadCompleteReceiver != null ) {
             // deliver any previously loaded data immediately.
             TrexinUtils.logInfo( "Immediately delivering previously loaded data to the client...");
-            this.deliverResult( this.fileDownload );
-        } else if ( this.downloadCompleteReceiver == null ) {
+            this.deliverResult( this.downloadCompleteReceiver.getDownloadResultResult() );
+        } else {
             // start download listener
             Context context = this.getContext();
             DownloadManager downloadMgr = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -160,7 +158,8 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
     @Override
     protected void onStopLoading() {
         TrexinUtils.logInfo( String.format( "'%s'.onStopLoading() called", this ));
-        super.onStopLoading();
+        this.cancelLoad();
+//        super.onStopLoading();
     }
 
     @Override
@@ -175,26 +174,21 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
             this.downloadCompleteReceiver.unregister( this.getContext() );
             this.downloadCompleteReceiver = null;
         }
-
-        if ( this.fileDownload != null ) {
-            this.releaseResources( this.fileDownload );
-        }
-        this.fileDownload = null;
     }
 
     @Override
-    public FileDownload loadInBackground() {
+    public DownloadResult loadInBackground() {
         // A task that performs the asynchronous load
         TrexinUtils.logInfo( String.format( "'%s'.loadInBackground() started...", this ));
         try {
-            return this.downloadCompleteReceiver.getDownloadResult();
+            return this.downloadCompleteReceiver.getDownloadResultResult();
         } finally {
             TrexinUtils.logInfo( String.format( "'%s'.loadInBackground() completed", this ));
         }
     }
 
     @Override
-    public void deliverResult( FileDownload newFileDownload){
+    public void deliverResult( DownloadResult newDownloadResult){
         TrexinUtils.logInfo( String.format( "'%s'.deliverResult() started...", this ));
         try {
             if (isReset()) {
@@ -205,34 +199,20 @@ public class FileDownloadLoader extends AsyncTaskLoader<FileDownload> {
                 // finishes its work and attempts to deliver the results to the client,
                 // it will see here that the Loader has been reset and discard any
                 // resources associated with the new data as necessary.
-                if ( newFileDownload != null) {
-                    this.releaseResources( newFileDownload );
-                }
                 return;
             }
 
-            // Hold a reference to the old data so it doesn't get garbage collected.
-            // The old data may still be in use (i.e. bound to an adapter, etc.), so
-            // we must protect it until the new data has been delivered.
-            FileDownload oldFileDownload = this.fileDownload;
-            this.fileDownload = newFileDownload;
-
             if ( isStarted() ) {
                 // If the Loader is in a started state, have the superclass deliver the results to the client.
-                super.deliverResult(newFileDownload);
-            }
-
-            // Invalidate the old data as we don't need it any more.
-            if ( oldFileDownload != null && oldFileDownload != newFileDownload ) {
-                TrexinUtils.logInfo("Releasing any old data associated with this Loader.");
-                this.releaseResources(oldFileDownload);
+                super.deliverResult(newDownloadResult);
             }
         } finally {
             TrexinUtils.logInfo( String.format( "'%s'.deliverResult() completed...", this ));
         }
     }
 
-    private void releaseResources( FileDownload fileDownload ){
-        TrexinUtils.logInfo(String.format("Releasing resources (removing the downloaded file??) for '%s'", fileDownload));
+    @Override
+    public String toString() {
+        return String.format( "FileDownloadLoader[loaderId='%s'; downloadUrl='%s']", this.getId(), this.downloadUrl );
     }
 }

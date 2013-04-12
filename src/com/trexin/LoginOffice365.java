@@ -11,6 +11,7 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.trexin.download.DownloadState;
 
 public class LoginOffice365 extends Activity {
     class MyWebViewClient extends WebViewClient {
