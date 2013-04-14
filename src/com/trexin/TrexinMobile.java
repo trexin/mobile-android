@@ -1,22 +1,15 @@
 package com.trexin;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
-import android.view.View;
 import com.trexin.download.DownloadResult;
 import com.trexin.download.DownloadState;
 import com.trexin.download.FileDownloadLoader;
@@ -26,69 +19,6 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
 
     private DownloadState downloadState = new DownloadState();
     private boolean stateAlreadySaved;
-
-    public static class ProgressDialogFragment extends DialogFragment {
-        public static String PROGRESS_DIALOG_TAG = "progressDialog";
-
-        public static ProgressDialogFragment newInstance() {
-            return new ProgressDialogFragment();
-        }
-
-        @Override
-        public Dialog onCreateDialog( Bundle savedInstanceState ) {
-            final ProgressDialog progressDialog = new ProgressDialog( getActivity() );
-            progressDialog.setMessage( this.getString( R.string.dialog_progress_message ));
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(true);
-
-            // Disable the back button
-            progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    return keyCode == KeyEvent.KEYCODE_BACK;
-                }
-            });
-
-            progressDialog.setButton( DialogInterface.BUTTON_NEGATIVE,
-                    getString( android.R.string.cancel ),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick( DialogInterface dialog, int which ) {
-                            // 1. close the dialog
-                            dialog.dismiss();
-                            // 2. destroy the corresponding loader
-                            TrexinMobile trexinMobile = (TrexinMobile)getActivity();
-                            Integer currentLoaderId = trexinMobile.downloadState.getActiveLoaderId();
-                            trexinMobile.getLoaderManager().destroyLoader( currentLoaderId );
-                        }
-                    });
-            return progressDialog;
-        }
-    }
-
-    public static class ErrorDialogFragment extends DialogFragment {
-        public static String ERROR_DIALOG_TAG = "errorDialog";
-
-        public static ErrorDialogFragment newInstance( int title, String text ){
-            ErrorDialogFragment frag = new ErrorDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt( "title", title );
-            args.putString("text", text);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog( Bundle savedInstanceState ) {
-            int title = this.getArguments().getInt( "title" );
-            String text = this.getArguments().getString( "text" );
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle( title ).
-                    setIcon( android.R.drawable.ic_dialog_alert ).
-                    setMessage( text ).
-                    setPositiveButton( android.R.string.ok, null );
-            return builder.create();
-        }
-    }
 
     private void initDownloadIfAny(){
         Integer activeLoaderId = this.downloadState.getActiveLoaderId();
@@ -120,7 +50,13 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         this.stateAlreadySaved = false;
     }
 
-    private void downloadAndViewFile( String url ){
+    public void cancelDownload(){
+        // destroy the corresponding loader
+        Integer currentLoaderId = this.downloadState.getActiveLoaderId();
+        this.getLoaderManager().destroyLoader( currentLoaderId );
+    }
+
+    public void downloadAndViewFile( String url ){
         DownloadResult downloadResult = this.downloadState.cachedDownloadResult(url);
         if ( downloadResult != null ){
             // 1. if download result is already cached, simply render it in UI
@@ -233,25 +169,5 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
 
     public void onLoaderReset(Loader<DownloadResult> fileDownloadLoader) {
         TrexinUtils.logInfo("onLoaderReset() called");
-    }
-
-    public void openMentorProgram( View view ){
-        this.downloadAndViewFile( this.getString( R.string.url_mentor_program ) );
-    }
-
-    public void openDevelopmentCalendar( View view ){
-        this.downloadAndViewFile( this.getString( R.string.url_development_calendar ) );
-    }
-
-    public void openDevelopmentTracking( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_development_tracking ) );
-    }
-
-    public void openDevelopmentProgram( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_development_program ) );
-    }
-
-    public void openPayrollSchedule( View view ) {
-        this.downloadAndViewFile( this.getString( R.string.url_payroll_schedule ) );
     }
 }

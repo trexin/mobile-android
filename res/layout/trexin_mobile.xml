@@ -1,33 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingTop="5dp">
-
-    <LinearLayout android:onClick="openMentorProgram" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/coffee_icon30" style="@style/MainMenuImage"/>
-	    <TextView android:text="@string/mentor_program" style="@style/MainMenuText"/>
-    </LinearLayout>
-
-    <LinearLayout android:onClick="openDevelopmentCalendar" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/calendar_icon30" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/development_calendar" style="@style/MainMenuText"/>
-    </LinearLayout>
-
-    <LinearLayout android:onClick="openDevelopmentTracking" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/tracking_icon30" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/development_tracking" style="@style/MainMenuText"/>
-    </LinearLayout>
-
-    <LinearLayout android:onClick="openDevelopmentProgram" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/development_icon30" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/development_program" style="@style/MainMenuText"/>
-    </LinearLayout>
-
-    <LinearLayout android:onClick="openPayrollSchedule" style="@style/MainMenuItem">
-        <ImageView android:src="@drawable/payroll_icon30" style="@style/MainMenuImage"/>
-        <TextView android:text="@string/payroll_schedule" style="@style/MainMenuText"/>
-    </LinearLayout>
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+    <fragment class="com.trexin.TrexinMenuFragment"
+              android:id="@+id/actions"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"/>
+</FrameLayout>
 

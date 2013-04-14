@@ -3,19 +3,8 @@
     <string name="app_name">Trexin</string>
     <string name="receiver_name">Trexin Download listener</string>
     <string name="login">Login</string>
-    <string name="mentor_program">Mentor Program</string>
-    <string name="development_calendar">Development Calendar</string>
-    <string name="development_tracking">Development Tracking</string>
-    <string name="development_program">Development Program</string>
-    <string name="payroll_schedule">Payroll Schedule</string>
 
     <string name="url_login_page">https://trexinconsulting.sharepoint.com/SitePages/Home.aspx</string>
-
-    <string name="url_mentor_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
-    <string name="url_development_calendar">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
-    <string name="url_development_tracking">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
-    <string name="url_development_program">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
-    <string name="url_payroll_schedule">https://trexinconsulting.sharepoint.com/DemoTeamSite/Shared%20Documents/Trexin%20Consulting%20Personnel%20Development%20(2).docx</string>
 
     <string name="dialog.download.failed.title">Download failure</string>
     <string name="dialog.cannot.open.title">Reading failure</string>
