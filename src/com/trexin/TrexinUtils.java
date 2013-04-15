@@ -25,4 +25,8 @@ public class TrexinUtils {
     public static void logError( String message ){
         Log.e( TrexinUtils.LOG_TAG, decorateMessage( message ) );
     }
+
+    public static void logError( String message, Throwable error ){
+        Log.e( TrexinUtils.LOG_TAG, decorateMessage( message ), error );
+    }
 }

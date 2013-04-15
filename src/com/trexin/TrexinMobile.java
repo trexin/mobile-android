@@ -53,7 +53,9 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
     public void cancelDownload(){
         // destroy the corresponding loader
         Integer currentLoaderId = this.downloadState.getActiveLoaderId();
-        this.getLoaderManager().destroyLoader( currentLoaderId );
+        if ( currentLoaderId != null ){
+            this.getLoaderManager().destroyLoader( currentLoaderId );
+        }
     }
 
     public void downloadAndViewFile( String url ){
@@ -140,6 +142,23 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
         this.stateAlreadySaved = true;
         // 2. carry over the 'current download url' in case of configuration change
         outState.putParcelable( TrexinUtils.KEY_DOWNLOAD_STATE, this.downloadState );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // is activity simply pausing (i.e. configuration change) or completely finishing?
+        if ( this.isFinishing() ) {
+            // The activity is really finishing
+            new Thread( new Runnable(){
+                public void run() {
+                    // 1. cancel the active download if any
+                    cancelDownload();
+                    // 2. clear the cached files if any
+                    downloadState.clearCachedFiles();
+                }
+            }, "downloadState-cleanup" ).start();
+        }
     }
 
     public Loader<DownloadResult> onCreateLoader( int id, Bundle args ) {

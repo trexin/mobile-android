@@ -3,7 +3,9 @@ package com.trexin.download;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import com.trexin.TrexinUtils;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,6 +80,21 @@ public class DownloadState implements Parcelable {
 
     public Integer getActiveLoaderId() {
         return this.activeLoaderId;
+    }
+
+    public void clearCachedFiles(){
+        TrexinUtils.logInfo("Start removing cached files from the disk...");
+        for ( DownloadResult downloadResult : this.cachedDownloadResults.values() ) {
+            if ( downloadResult.isSuccess() ){
+                File fileToRemove = new File( downloadResult.getLocalFile().getPath() );
+                try {
+                    fileToRemove.delete();
+                    TrexinUtils.logInfo("File '" + fileToRemove.getAbsolutePath() + "' removed from disk." );
+                } catch ( Exception e ){
+                    TrexinUtils.logError( "Error while removing file '" + fileToRemove.getAbsolutePath() + "'", e );
+                }
+            }
+        }
     }
 
     public String toString(){
