@@ -13,6 +13,7 @@ public class DownloadResult implements Parcelable {
     private Integer httpErrorCode;
 
     public static final int HTTP_CODE_FORBIDDEN = 403;
+    public static final int HTTP_CODE_INTERNAL_SERVER_ERROR = 500;
 
     public static final Parcelable.Creator<DownloadResult> CREATOR = new Parcelable.Creator<DownloadResult>() {
         public DownloadResult createFromParcel(Parcel in) {
@@ -82,7 +83,8 @@ public class DownloadResult implements Parcelable {
     }
 
     public boolean isLoginRequired(){
-        return this.httpErrorCode != null && this.httpErrorCode == HTTP_CODE_FORBIDDEN;
+        return this.httpErrorCode != null &&
+               ( this.httpErrorCode == HTTP_CODE_FORBIDDEN || this.httpErrorCode == HTTP_CODE_INTERNAL_SERVER_ERROR );
     }
 
     @Override

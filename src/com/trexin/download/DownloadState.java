@@ -49,11 +49,11 @@ public class DownloadState implements Parcelable {
     private void readFromParcel( Parcel in ){
         int count = in.readInt();
         for (int i = 0; i < count; i++) {
-            this.cachedDownloadResults.put( in.readString(), in.<DownloadResult>readParcelable(null) );
+            this.cachedDownloadResults.put( in.readString(), in.<DownloadResult>readParcelable( DownloadResult.class.getClassLoader()) );
         }
         this.activeDownloadUrl = in.readString();
         String loaderId = in.readString();
-        if ( TextUtils.isEmpty( loaderId ) ){
+        if ( !TextUtils.isEmpty( loaderId ) ){
             this.activeLoaderId = Integer.valueOf( loaderId );
         }
         this.nextLoaderId = in.readInt();
@@ -62,6 +62,7 @@ public class DownloadState implements Parcelable {
     public void markActiveDownload(String activeDownloadUrl) {
         this.activeDownloadUrl = activeDownloadUrl;
         this.activeLoaderId = this.nextLoaderId++;
+        this.cachedDownloadResults.remove( activeDownloadUrl );
     }
 
     public void endActiveDownload( String url, DownloadResult downloadResult ) {

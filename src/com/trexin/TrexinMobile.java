@@ -80,7 +80,14 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                     TrexinUtils.logInfo( "Scheduling download after successful login..." );
                     this.stateAlreadySaved = false;
                     this.downloadState = data.getParcelableExtra( TrexinUtils.KEY_DOWNLOAD_STATE );
-                    this.initDownloadIfAny();
+                    // Re-attempt to download the file. Note that I schedule actual downloading
+                    // [downloadAndViewFile()] for later because I need to close the browser window
+                    // as soon as possible.
+                    this.handler.post( new Runnable() {
+                        public void run() {
+                            downloadAndViewFile( downloadState.getActiveDownloadUrl() );
+                        }
+                    });
                 }
                 return;
             }
@@ -102,6 +109,9 @@ public class TrexinMobile extends Activity implements LoaderManager.LoaderCallba
                 // 2. login is required
                 TrexinUtils.logInfo( "Starting the Login screen ." );
                 Intent loginIntent = new Intent( this, LoginOffice365.class );
+                // Send the user to login activity. Pass along the 'download state' which holds the target URL.
+                this.downloadState.markActiveDownload( downloadResult.getTargetUrl() );
+                loginIntent.putExtra( TrexinUtils.KEY_DOWNLOAD_STATE, this.downloadState );
                 this.startActivityForResult( loginIntent, 0 );
                 return;
             } else if ( !downloadResult.isSuccess() ){
