@@ -83,8 +83,16 @@ public class DownloadResult implements Parcelable {
     }
 
     public boolean isLoginRequired(){
-        return this.httpErrorCode != null &&
-               ( this.httpErrorCode == HTTP_CODE_FORBIDDEN || this.httpErrorCode == HTTP_CODE_INTERNAL_SERVER_ERROR );
+        //
+        if ( this.httpErrorCode != null && ( this.httpErrorCode == HTTP_CODE_FORBIDDEN ||
+                                             this.httpErrorCode == HTTP_CODE_INTERNAL_SERVER_ERROR )){
+            return true;
+        }
+        // NOTE: [Sergey Petrov, 6/5/2013] Office365 2013 does not return a 403 or 500 HTTP error when the app makes an
+        // HTTP request with a bad cookie. Instead it sends back an 'error happened' html page. Since at this moment
+        // I only expect 'application/pdf' mime type then 'text/html' constitutes an error.
+        // This logic is unreliable but it will work for this moment.
+        return "text/html".equals( this.mimeType );
     }
 
     @Override
